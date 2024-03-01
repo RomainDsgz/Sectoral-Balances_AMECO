@@ -4,7 +4,7 @@ rm(list=ls())
 # Obtaining and cleaning the data 
 # Manually download .txt zip from https://ec.europa.eu/info/business-economy-euro/indicators-statistics/economic-databases/macro-economic-database-ameco/download-annual-data-set-macro-economic-database-ameco_en
 # 
-files <- dir("C:/Users/rdesg/Documents/sectoral_balances/ameco0", ".TXT", full.names = TRUE)
+files <- dir("path/sectoral_balances/ameco0", ".TXT", full.names = TRUE)
 
 # Load packages for data extraction
 library(dplyr)
@@ -33,7 +33,7 @@ ameco$year <- as.numeric(ameco$year)
 ameco$value <- suppressWarnings(as.numeric(ameco$value))
 
 # Save prepared data                                
-save(ameco, file = "C:/Users/rdesg/Documents/sectoral_balances/ameco.RData", 
+save(ameco, file = "path/sectoral_balances/ameco.RData", 
      compress = "xz")
 
 # Load packages for analysis 
@@ -41,10 +41,11 @@ library(ggplot2)
 library(reshape2)
 
 # Load data
-load("C:/Users/rdesg/Documents/sectoral_balances/ameco.RData")
+load("path/sectoral_balances/ameco.RData")
 
-# Extract data for Switzerland (CHE)
+# Extract data for Switzerland (CHE). The script works for all countries represented in AMECO with available data
 ch <- subset(ameco, country == "Switzerland")
+
 
 # Codes of the different variables for Net lending - Net borrowing (Mrd CHF)
 # Find codes for Net lending/Net borrowing 
