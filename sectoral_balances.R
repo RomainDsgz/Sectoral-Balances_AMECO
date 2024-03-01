@@ -133,7 +133,6 @@ dfw$pub_bal <- (dfw$pub/dfw$UVGN)*100
 dfw$row_bal <- (dfw$row/dfw$UVGN) *100
 
 # Check if equality (S-I) + (G-T) + (-CAB) = 0
-
 dfw$balances <- dfw$priv_bal + dfw$pub_bal + dfw$row_bal
 dfw$balances
 
@@ -149,7 +148,6 @@ plot_3sectors <- ggplot() +
                     labels = c("Private sector", "Public Sector", "Rest of the World")) +
   labs(x = "Year", y = "Net lending - Net borrowing", fill = "Balances") + 
   theme_minimal() + 
-  #theme(plot.background = element_rect(fill = "white")) + 
   scale_x_continuous(breaks = seq(1995, 2022, by = 5)) +
   theme(legend.position = "bottom") + 
   guides(fill = guide_legend(nrow=1)) +
