@@ -87,13 +87,8 @@ dfw <- spread (df,
                value = value)
 
 # rename codes
-dfw <- rename(dfw, UIGT = "CHE.1.0.0.0.UIGT")
 dfw <- rename(dfw, UBLC = "CHE.1.0.0.0.UBLC")
 dfw <- rename(dfw, UBLH = "CHE.1.0.0.0.UBLH")
-dfw <- rename(dfw, USGP = "CHE.1.0.0.0.USGP")
-dfw <- rename(dfw, OIST = "CHE.1.0.0.0.OIST")
-dfw <- rename(dfw, UKTGT = "CHE.1.0.0.0.UKTGT")
-
 
 dfw <- rename(dfw, URTG = "CHE.1.0.0.0.URTG")
 dfw <- rename(dfw, UUTG = "CHE.1.0.0.0.UUTG")
@@ -153,5 +148,13 @@ plot_3sectors <- ggplot() +
   guides(fill = guide_legend(nrow=1)) +
   labs(title = "Sectoral balances",
        subtitle = "Switzerland, 1995-2022", 
-       caption = "Source: AMECO")
+       caption = "Source: AMECO") + 
+  ###
+  # Here I am adding a geom_vline for the Swiss sectoral balances, due to the introduction of the debt brake in 2003
+  ## The debt brake aims at stabilizing revenues and expenses of the federal state over the medium run. 
+  ### It also explains the surpluses of the public sector between 2006 and 2019. 
+  geom_vline(xintercept = 2003, linetype = "dotted", color="black", linewidth = 1) + 
+  geom_text(aes(x = 2003, y = Inf, label = "Introduction of the Debt Brake"), vjust =1, hjust = -0.07, color = "black") 
 print(plot_3sectors)  
+ggsave("plot_3sectorsCHE.pdf")
+
