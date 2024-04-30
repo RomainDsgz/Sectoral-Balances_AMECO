@@ -44,7 +44,7 @@ library(reshape2)
 load("ameco.RData")
 
 # Extract data for Estonia (EST)
-est <- subset(ameco, country == "Estonia")
+esp <- subset(ameco, country == "Spain")
 
 # Codes of the different variables for Net lending - Net borrowing (Mrd National Currency)
 # Find codes for Net lending/Net borrowing 
@@ -64,15 +64,15 @@ est <- subset(ameco, country == "Estonia")
 # UBLA = Rest of the World : UBLA (Mrd National Currency)
 # UVGN = Gross National Income (Current prices)
 
-UBLC <- subset(est, code == "EST.1.0.0.0.UBLC")
-UBLH <- subset(est, code == "EST.1.0.0.0.UBLH")
-URTG <- subset(est, code == "EST.1.0.0.0.URTG")
-UUTG <- subset(est, code == "EST.1.0.0.0.UUTG")
-UBLG <- subset(est, code == "EST.1.0.0.0.UBLG")
-UXGS <- subset(est, code == "EST.1.0.0.0.UXGS")
-UMGS <- subset(est, code == "EST.1.0.0.0.UMGS")
-UBLA <- subset(est, code == "EST.1.0.0.0.UBLA")
-UVGN <- subset(est, code == "EST.1.0.0.0.UVGN")
+UBLC <- subset(esp, code == "ESP.1.0.0.0.UBLC")
+UBLH <- subset(esp, code == "ESP.1.0.0.0.UBLH")
+URTG <- subset(esp, code == "ESP.1.0.0.0.URTG")
+UUTG <- subset(esp, code == "ESP.1.0.0.0.UUTG")
+UBLG <- subset(esp, code == "ESP.1.0.0.0.UBLG")
+UXGS <- subset(esp, code == "ESP.1.0.0.0.UXGS")
+UMGS <- subset(esp, code == "ESP.1.0.0.0.UMGS")
+UBLA <- subset(esp, code == "ESP.1.0.0.0.UBLA")
+UVGN <- subset(esp, code == "ESP.1.0.0.0.UVGN")
 
 # Merge them into one dataframe
 df <- rbind(UBLC, UBLH,URTG, UUTG, UBLG, UXGS, UMGS, UBLA, UVGN)
@@ -87,18 +87,18 @@ dfw <- spread (df,
                value = value)
 
 # rename codes
-dfw <- rename(dfw, UBLC = "EST.1.0.0.0.UBLC")
-dfw <- rename(dfw, UBLH = "EST.1.0.0.0.UBLH")
+dfw <- rename(dfw, UBLC = "ESP.1.0.0.0.UBLC")
+dfw <- rename(dfw, UBLH = "ESP.1.0.0.0.UBLH")
 
-dfw <- rename(dfw, URTG = "EST.1.0.0.0.URTG")
-dfw <- rename(dfw, UUTG = "EST.1.0.0.0.UUTG")
-dfw <- rename(dfw, UBLG = "EST.1.0.0.0.UBLG")
+dfw <- rename(dfw, URTG = "ESP.1.0.0.0.URTG")
+dfw <- rename(dfw, UUTG = "ESP.1.0.0.0.UUTG")
+dfw <- rename(dfw, UBLG = "ESP.1.0.0.0.UBLG")
 
-dfw <- rename(dfw, UXGS = "EST.1.0.0.0.UXGS")
-dfw <- rename(dfw, UMGS = "EST.1.0.0.0.UMGS")
-dfw <- rename(dfw, UBLA = "EST.1.0.0.0.UBLA")
+dfw <- rename(dfw, UXGS = "ESP.1.0.0.0.UXGS")
+dfw <- rename(dfw, UMGS = "ESP.1.0.0.0.UMGS")
+dfw <- rename(dfw, UBLA = "ESP.1.0.0.0.UBLA")
 
-dfw <- rename(dfw, UVGN = "EST.1.0.0.0.UVGN")
+dfw <- rename(dfw, UVGN = "ESP.1.0.0.0.UVGN")
 
 #Now that the data is ready, we can now determine the macroeconomic sectoral balances. 
 # (S - I)+ (T - G) + (- CAB) ≡ 0 
@@ -149,9 +149,9 @@ plot_3sectors <- ggplot() +
   theme(legend.position = "bottom") + 
   guides(fill = guide_legend(nrow=1)) +
   labs(title = "Sectoral balances",
-       subtitle = "Estonia, 1995-2022", 
+       subtitle = "Spain, 1995-2022", 
        caption = "Source: AMECO. By @RomainDsgz")
 print(plot_3sectors)  
-ggsave("3sectors_balances_EST.jpg", width = 20, height = 15, units = "cm")
+ggsave("3sectors_balances_ESP.jpg", width = 20, height = 15, units = "cm")
 
 
