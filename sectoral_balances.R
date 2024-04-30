@@ -4,9 +4,8 @@ rm(list=ls())
 # Obtaining and cleaning the data 
 # Manually download .txt zip from https://ec.europa.eu/info/business-economy-euro/indicators-statistics/economic-databases/macro-economic-database-ameco/download-annual-data-set-macro-economic-database-ameco_en
 # 
-getwd()
-files <- dir(path = "C:/Users/rdesg/Documents/Sectoral-Balances/ameco0", "*.TXT", full.names = TRUE)
-?dir
+files <- dir("ameco0", ".TXT", full.names = TRUE)
+
 # Load packages for data extraction
 library(dplyr)
 library(tidyr)
@@ -34,7 +33,7 @@ ameco$year <- as.numeric(ameco$year)
 ameco$value <- suppressWarnings(as.numeric(ameco$value))
 
 # Save prepared data                                
-save(ameco, file = "path/sectoral_balances/ameco.RData", 
+save(ameco, file = "ameco.RData", 
      compress = "xz")
 
 # Load packages for analysis 
@@ -42,7 +41,7 @@ library(ggplot2)
 library(reshape2)
 
 # Load data
-load("C:/Users/rdesg/Documents/Sectoral-Balances/ameco.RData")
+load("ameco.RData")
 
 # Extract data for Switzerland (CHE)
 ch <- subset(ameco, country == "Switzerland")
@@ -102,7 +101,8 @@ dfw <- rename(dfw, UBLA = "CHE.1.0.0.0.UBLA")
 dfw <- rename(dfw, UVGN = "CHE.1.0.0.0.UVGN")
 
 #Now that the data is ready, we can now determine the macroeconomic sectoral balances. 
-# (S - I)+ (T - G) + (- CAB) ??? 0 
+# (S - I)+ (T - G) + (- CAB) ≡ 0 
+
 ## Public Sector can be found via two methods:
 dfw$pub <- dfw$URTG - dfw$UUTG # Revenues - Expenses 
 # Or use Net lending - Net borrowing of public sector (UBLG)
@@ -110,25 +110,26 @@ dfw$pub <- dfw$UBLG
 
 ## Rest of the World
 # According to Mitchell, Wray and Watts (2019), CAB = Exports - Imports + Foreign Net Income
-# Note that row_bal is negative
-dfw$row <- dfw$UBLA  * -1
+# Note that row_bal nets tp be expressed as -CAB
+dfw$row <- dfw$UBLA  * (-1)
 dfw$row
 ## Private Sector
 #Since AMECO does not include some financial data, the sum of Net lending - Net borrowing of Corporations (UBLC) + Net lending - Net borrowing of Households (UBLH) =/= Private sector balance
-# Hence, we can use (S - l) ??? (G - T) + (X - M + FNl) ??? (G - T) + CAB
+# Hence, we can use (S - l) ≡ (G - T) + (X - M + FNl) ≡ (G - T) + CAB
 
 # Note that the sign of pub_bal is inversed, since the deficit of the public sector is the surplus of the private sector
-dfw$priv <- (dfw$pub *-1) - dfw$row
+dfw$priv <- (dfw$pub *(-1)) - dfw$row
 # Now that we have all balances, we can check the equality (S - I)+ (T - G) + (- CAB) ??? 0
 dfw$bal <- dfw$priv + dfw$pub + dfw$row
 dfw$bal 
-
+head(dfw$bal)
 # Now we can calculate the share (in % of GNI)
 dfw$priv_bal <- (dfw$priv/dfw$UVGN)*100
 dfw$pub_bal <- (dfw$pub/dfw$UVGN)*100
 dfw$row_bal <- (dfw$row/dfw$UVGN) *100
 
 # Check if equality (S-I) + (G-T) + (-CAB) = 0
+
 dfw$balances <- dfw$priv_bal + dfw$pub_bal + dfw$row_bal
 dfw$balances
 
@@ -136,10 +137,11 @@ dfw$balances
 melted_df <- dfw %>%
   select(year, priv_bal, pub_bal, row_bal) %>%
   gather(key = "variable", value = "value", -year)
-
 colors3 <- c("indianred3", "chartreuse4", "turquoise3")
+
 plot_3sectors <- ggplot() + 
   geom_bar(data = subset(melted_df, year >= 1995 & year<=2022), aes(x = year, y = value, fill = variable), stat = "identity") + 
+  geom_vline(xintercept = 2003, linetype = "dotted", lwd = 0.8) + #Added a vertical line for the year of introduction of the debt brake in Switzerland
   scale_fill_manual(values = colors3,
                     labels = c("Private sector", "Public Sector", "Rest of the World")) +
   labs(x = "Year", y = "Net lending - Net borrowing", fill = "Balances") + 
@@ -149,13 +151,6 @@ plot_3sectors <- ggplot() +
   guides(fill = guide_legend(nrow=1)) +
   labs(title = "Sectoral balances",
        subtitle = "Switzerland, 1995-2022", 
-       caption = "Source: AMECO") + 
-  ###
-  # Here I am adding a geom_vline for the Swiss sectoral balances, due to the introduction of the debt brake in 2003
-  ## The debt brake aims at stabilizing revenues and expenses of the federal state over the medium run. 
-  ### It also explains the surpluses of the public sector between 2006 and 2019. 
-  geom_vline(xintercept = 2003, linetype = "dotted", color="black", linewidth = 1) + 
-  geom_text(aes(x = 2003, y = Inf, label = "Introduction of the Debt Brake"), vjust =1, hjust = -0.07, color = "black") 
+       caption = "Source: AMECO. By @RomainDsgz")
 print(plot_3sectors)  
-ggsave("plot_3sectorsCHE.pdf")
-
+ggsave("3sectors_balances_CHE.jpg", width = 20, height = 15, units = "cm")
