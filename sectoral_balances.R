@@ -4,8 +4,9 @@ rm(list=ls())
 # Obtaining and cleaning the data 
 # Manually download .txt zip from https://ec.europa.eu/info/business-economy-euro/indicators-statistics/economic-databases/macro-economic-database-ameco/download-annual-data-set-macro-economic-database-ameco_en
 # 
-files <- dir("path/sectoral_balances/ameco0", ".TXT", full.names = TRUE)
-
+getwd()
+files <- dir(path = "C:/Users/rdesg/Documents/Sectoral-Balances/ameco0", "*.TXT", full.names = TRUE)
+?dir
 # Load packages for data extraction
 library(dplyr)
 library(tidyr)
@@ -41,7 +42,7 @@ library(ggplot2)
 library(reshape2)
 
 # Load data
-load("path/sectoral_balances/ameco.RData")
+load("C:/Users/rdesg/Documents/Sectoral-Balances/ameco.RData")
 
 # Extract data for Switzerland (CHE)
 ch <- subset(ameco, country == "Switzerland")
